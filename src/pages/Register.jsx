@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BsFillChatDotsFill } from "react-icons/bs";
+import { FcAddImage } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { auth, db, storage } from '../firebase.js';
+import { doc, setDoc } from 'firebase/firestore';
+
 
 
 const Container = styled.div`
@@ -59,6 +69,10 @@ const Input = styled.input`
     background: transparent;
     width: 100%;
 `
+const InputImage = styled.input`
+    display: none;
+`
+
 const Submit = styled.button`
     padding: 1rem 2rem;
     border: none;
@@ -68,9 +82,52 @@ const Submit = styled.button`
         background-color: #a4ccff;
     }
 `
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+`
+
 const Linked = styled.span``;
 
 const Register = () => {
+  const [err, setErr] = useState(false);
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    const displayName = e.target[0].value;
+    const email = e.target[1].value;
+    const password = e.target[2].value;
+    const file = e.target[3].files[0];
+    try {
+      const res = await createUserWithEmailAndPassword(auth,email,password)
+      const storageRef = ref(storage, displayName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        (error) => {
+          setErr(true)
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
+            await updateProfile(res.user, {
+              displayName,
+              photoURL: downloadURL,
+            })
+            await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayName,
+              email,
+              photoURL: downloadURL
+            })
+          });
+        }
+      );
+    } catch (error) {
+      
+    }
+  }
+
   return (
     <Container>
       <Card>
@@ -79,17 +136,25 @@ const Register = () => {
           LetsChat!
         </Title>
         <Desc>Sign Up</Desc>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <InputContainer>
-            <Input placeholder="Your Name" />
+            <Input type="text" placeholder="Your Name" />
           </InputContainer>
           <InputContainer>
-            <Input placeholder="Username" />
+            <Input type="email" placeholder="Username" />
           </InputContainer>
           <InputContainer>
-            <Input placeholder="Password" />
+            <Input type="password" placeholder="Password" />
+          </InputContainer>
+          <InputContainer>
+            <InputImage type="file" id="photo" />
+            <Label htmlFor="photo">
+              <FcAddImage />
+              Add Profile Picture
+            </Label>
           </InputContainer>
           <Submit>Sign Up</Submit>
+          {err && <span>Something wrong</span>}
           <Linked>
             Already have an account?{" "}
             <Link to="/login" style={{ textDecoration: "none" }}>
