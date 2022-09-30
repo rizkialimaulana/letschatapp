@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { FcAddImage } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   ref,
@@ -94,6 +94,7 @@ const Linked = styled.span``;
 
 const Register = () => {
   const [err, setErr] = useState(false);
+  const navigate = useNavigate();
   const handleSubmit = async(e) => {
     e.preventDefault()
     const displayName = e.target[0].value;
@@ -120,11 +121,13 @@ const Register = () => {
               email,
               photoURL: downloadURL
             })
+            await setDoc(doc(db, "userChats", res.user.uid), {})
+            navigate("/")
           });
         }
       );
     } catch (error) {
-      
+      setErr(true)
     }
   }
 
@@ -141,7 +144,7 @@ const Register = () => {
             <Input type="text" placeholder="Your Name" />
           </InputContainer>
           <InputContainer>
-            <Input type="email" placeholder="Username" />
+            <Input type="email" placeholder="Email" />
           </InputContainer>
           <InputContainer>
             <Input type="password" placeholder="Password" />

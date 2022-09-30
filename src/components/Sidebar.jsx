@@ -4,6 +4,8 @@ import User from './User';
 import profile from '../img/profile.jpg';
 import { AiFillSetting } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Container = styled.div`
   flex: 0.5;
@@ -19,6 +21,15 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+`
+
+const ProfileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
+const Name = styled.span`
+  font-weight: bold;
 `
 
 const Profile = styled.img`
@@ -66,12 +77,15 @@ const Sidebar = () => {
   return (
     <Container>
       <Header>
-        <Profile src={profile} />
+        <ProfileContainer>
+          <Profile src={profile} />
+          <Name>User</Name>
+        </ProfileContainer>
         <Detail>
           <Setting>
             <AiFillSetting />
           </Setting>
-          <Logout>
+          <Logout onClick={()=> signOut(auth)}>
             <FiLogOut />
           </Logout>
         </Detail>

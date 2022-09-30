@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BsFillChatDotsFill } from "react-icons/bs";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Container = styled.div`
   width: 100%;
@@ -71,6 +73,20 @@ const Submit = styled.button`
 const Linked = styled.span``
 
 const Login = () => {
+  const [err, setErr] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target[0].value;
+    const password = e.target[1].value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      navigate("/")
+    } catch (error) {
+      setErr(true);
+    }
+  };
   return (
     <Container>
       <Card>
@@ -79,14 +95,15 @@ const Login = () => {
           LetsChat!
         </Title>
         <Desc>Sign In</Desc>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <InputContainer>
-            <Input placeholder="Username" />
+            <Input type="email" placeholder="Email" />
           </InputContainer>
           <InputContainer>
-            <Input placeholder="Password" />
+            <Input type="password" placeholder="Password" />
           </InputContainer>
           <Submit>Sign In</Submit>
+          {err && <span style={{color: "red"}}>Login Failed</span>}
           <Linked>
             Dont have an account?{" "}
             <Link to="/register" style={{ textDecoration: "none" }}>
