@@ -9,6 +9,7 @@ const Container = styled.div`
     gap: 10px;
     margin-bottom: 25px;
 `
+
 const Profile = styled.img`
     object-fit: cover;
     width: 35px;
@@ -29,8 +30,8 @@ const MessageContainer = styled.div`
 `
 const Image = styled.img`
   object-fit: cover;
-  width: 100px;
-  height: 50px;
+  max-width: 40%;
+  max-height: auto;
   border-radius: 20px;
 `
 const Message = ({message}) => {
@@ -43,7 +44,7 @@ const Message = ({message}) => {
     ref.current?.scrollIntoView({behavior: "smooth"})
   },[message])
   return (
-    <Container ref={ref} >
+    <Container ref={ref}>
         <Profile src={message.senderId === currentUser.uid? currentUser.photoURL : data.user.photoURL}/>
         <MessageContainer>
           {message.text && <Text>{message.text}</Text>}
