@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { BsFillCameraVideoFill, BsThreeDots } from "react-icons/bs";
+import { ChatContext } from '../context/ChatContext';
 
 const Container = styled.div`
   flex: 0.1;
@@ -22,9 +23,10 @@ const Menu = styled.div`
 `
 
 const Navbar = () => {
+  const { data } = useContext(ChatContext);
   return (
     <Container>
-        <Name>User1</Name>
+        <Name>{data.user?.displayName}</Name>
         <Menu>
             <BsFillCameraVideoFill />
             <BsThreeDots />

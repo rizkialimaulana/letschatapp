@@ -1,18 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components';
 import User from './User';
-import profile from '../img/profile.jpg';
 import { AiFillSetting } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import { AuthContext } from '../context/AuthContext';
+import Search from './Search';
 
 const Container = styled.div`
   flex: 0.5;
-  background-color: #6fb9ff;
+  background-color: white;
   display: flex;
   flex-direction: column;
-  padding: 1rem 0.5rem;
   box-shadow: 7px 2px 5px -4px rgba(61, 55, 55, 0.75);
 `;
 
@@ -21,13 +21,15 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-`
+  background-color: #6fb9ff;
+  padding: 1rem 0.5rem;
+`;
 
 const ProfileContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-`
+`;
 const Name = styled.span`
   font-weight: bold;
 `
@@ -61,25 +63,20 @@ const Setting = styled.button`
   cursor: pointer;
 `
 
-const SearchContainer = styled.div`
-  border-top: 1px solid lightslategray;
-  border-bottom: 1px solid lightslategray;
+const UserContainer = styled.div`
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
 `
 
-const Search = styled.input`
-  width: 100%;
-  padding: 1rem;
-  background-color: transparent;
-  outline: none;
-  border: none;
-`
 const Sidebar = () => {
+  const {currentUser} = useContext(AuthContext);
   return (
     <Container>
       <Header>
         <ProfileContainer>
-          <Profile src={profile} />
-          <Name>User</Name>
+          <Profile src={currentUser.photoURL} />
+          <Name>{currentUser.displayName}</Name>
         </ProfileContainer>
         <Detail>
           <Setting>
@@ -90,13 +87,10 @@ const Sidebar = () => {
           </Logout>
         </Detail>
       </Header>
-      <SearchContainer>
-        <Search type="text" placeholder="Search your friend..." />
-      </SearchContainer>
-      <User />
-      <User />
-      <User />
-      <User />
+      <Search />
+      <UserContainer>
+          <User/>
+      </UserContainer>
     </Container>
   );
 }
