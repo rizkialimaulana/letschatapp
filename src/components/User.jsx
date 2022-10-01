@@ -70,7 +70,7 @@ const User = () => {
             <Profile src={chat[1].userInfo.photoURL}/>
             <Detail>
                 <Name>{chat[1].userInfo.displayName}</Name>
-                <Chat>{chat[1].userInfo.lastMessage?.text}</Chat>
+                <Chat>{chat[1].lastMessage?.text}</Chat>
             </Detail>
         </Container>
     ))}
